@@ -118,7 +118,6 @@ class DownloadContent {
   }
 
   async storeDataToLocalDB(docData, docName) {
-    console.log(docName[0]);
     await localDB
       .collection("contents")
       .add(
