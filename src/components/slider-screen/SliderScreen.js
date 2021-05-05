@@ -114,7 +114,7 @@ export default {
               await this.popupToast("Network Interrupted!", "danger", 5000, "bottom");
             });      
           });
-      }, 50000);
+      }, 2 * 60000);
     },
   },
 };

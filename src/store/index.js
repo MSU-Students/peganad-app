@@ -21,9 +21,9 @@ const store = createStore({
     },
   },
   actions: {
-    // isHide(context, value) {
-    //   context.commit("isHide", value);
-    // },
+    isHide(context, value) {
+      context.commit("isHide", value);
+    },
   },
 });
 
