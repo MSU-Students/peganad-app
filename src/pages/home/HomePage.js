@@ -12,7 +12,6 @@ import {
 } from "@ionic/vue";
 import { arrowForwardOutline } from "ionicons/icons";
 import { Plugins } from "@capacitor/core";
-import downloadContent from "../../services/download-content.service.js";
 import SliderScreen from "../../components/slider-screen/SliderScreen.vue";
 
 const { StatusBar } = Plugins;
@@ -56,7 +55,6 @@ export default {
   data() {
     return {
       cards: cards,
-      contents: {},
       showSlider: false,
       // icon
       arrowForwardOutline,
@@ -65,9 +63,6 @@ export default {
   ionViewWillEnter() {
     this.statusBar();
   },
-  created() {
-    this.checkContent();
-  },
   methods: {
     /** UI Logic **/
     async statusBar() {
@@ -75,20 +70,6 @@ export default {
         color: "#f4f5f8",
       });
       return statusBar;
-    },
-
-    async hideSlider(value) {
-      this.showSlider = await value;
-    },
-
-    /** BUSINESS LOGIC **/
-    async checkContent() {
-      const hasDB = await downloadContent.checkLocalContent();
-      if (hasDB) {
-        this.showSlider = false;
-      } else {
-        this.showSlider = true;
-      }
     },
   },
 };

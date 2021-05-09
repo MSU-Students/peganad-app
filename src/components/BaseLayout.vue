@@ -14,12 +14,12 @@
           ></ion-back-button>
         </ion-buttons>
         <ion-buttons slot="start">
-          <ion-button v-if="$route.fullPath == '/learn'" routerLink="/">
+          <ion-button v-if="$route.fullPath == '/learn'" routerLink="/home">
             <ion-icon slot="icon-only" :icon="arrowBackOutline"></ion-icon>
           </ion-button>
         </ion-buttons>
         <ion-buttons slot="start">
-          <ion-button v-if="$route.fullPath == '/game'" routerLink="/">
+          <ion-button v-if="$route.fullPath == '/game'" routerLink="/home">
             <ion-icon slot="icon-only" :icon="arrowBackOutline"></ion-icon>
           </ion-button>
         </ion-buttons>

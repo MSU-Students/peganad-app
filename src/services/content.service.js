@@ -10,14 +10,38 @@ import Localbase from "localbase";
 let localDB = new Localbase("db");
 localDB.config.debug = false;
 
+// eslint-disable-next-line no-unused-vars
+let nextQuery = undefined;
+let cursor = 0;
 class ContentService {
-  async getAnimals() {
-    let animalArr = [];
-    const res = await animalsQuery.get();
-    res.forEach((r) => {
-      animalArr.push(r.data());
-    });
-    return animalArr;
+  async getAnimals(cb) {
+    try {
+      let collectionSize = (await animalsQuery.get()).docs.length;
+      do {
+        let firstQuery = nextQuery
+          ? animalsQuery
+              .orderBy("name")
+              .limit(1)
+              .startAfter(nextQuery)
+          : animalsQuery.orderBy("name").limit(1);
+        let docSnapshot = await firstQuery.get();
+        nextQuery = docSnapshot.docs[0];
+        if (nextQuery) {
+          cursor += 1;
+          cb({
+            progress: cursor,
+            payload: nextQuery.data(),
+            category: "animals",
+          });
+        } else {
+          cursor = 0;
+          break;
+        }
+      } while (cursor < collectionSize);
+      // done download all contents stop all loading
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async getColors() {

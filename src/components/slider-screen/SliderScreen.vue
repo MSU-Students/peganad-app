@@ -1,5 +1,5 @@
 <template>
-  <ion-content fullscreen class="ion-padding" scroll-y="false">
+  <base-layout>
     <ion-slides>
       <ion-slide>
         <div class="slide">
@@ -44,26 +44,49 @@
 
       <ion-slide>
         <div class="slide-4">
-          <div v-if="internetStatus">
+          <div v-if="!isOnline">
             <div class="internet">Internet Lost!</div>
             <div class="note">
               Please connect to the internet to Download the content. Thank you!
             </div>
           </div>
-          <div v-if="!internetStatus">
+          <div v-if="isOnline">
             <img src="../../../public/assets/design/congrats.png" />
-            <h1 class="slide4-text">Download Contents</h1>
+            <div v-if="isDownloading">
+              <span v-if="status.progress != 0" class="ion-text-capitalize"
+                >{{ status.category }}: {{ status.progress }}
+              </span>
+              <span v-else class="ion-text-capitalize">Animal: 0 </span>
+              <ion-progress-bar
+                :value="status.progress / 10"
+              ></ion-progress-bar>
+            </div>
+            <h1 v-if="!isDownloading && !isStarting" class="slide4-text">
+              Download Contents
+            </h1>
+            <h1 v-else-if="isStarting" class="slide4-text">Starting...</h1>
+            <h1 v-if="isDownloading" class="slide4-text">Downloading...</h1>
             <ion-button
+              v-if="!status.done"
               @click="downloadContent()"
-              :disabled="internetStatus"
+              :disabled="!isOnline || isDownloading"
               color="success"
-              >Download<ion-icon slot="end" :icon="downloadOutline"></ion-icon
-            ></ion-button>
+              >Download
+              <ion-icon
+                v-if="!isDownloading"
+                slot="end"
+                :icon="downloadOutline"
+              />
+              <ion-spinner
+                v-else-if="isDownloading"
+                class="ion-margin-start"
+              ></ion-spinner>
+            </ion-button>
           </div>
         </div>
       </ion-slide>
     </ion-slides>
-  </ion-content>
+  </base-layout>
 </template>
 
 <script>
