@@ -3,8 +3,8 @@ import BaseLayout from "./components/BaseLayout.vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-
 import { IonicVue } from "@ionic/vue";
+import downloadContent from "./services/download-content.service.js";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/vue/css/core.css";
@@ -36,9 +36,17 @@ const app = createApp(App)
 
 app.component("base-layout", BaseLayout);
 
-router.isReady().then(() => {
-  app.mount("#app");
+router.isReady().then(async () => {
+  const hasCollection = await downloadContent.checkCollection();
+  if (hasCollection == false) {
+    router.replace("/download").then(() => {
+      app.mount("#app");
+    });
+  } else {
+    router.replace("/home").then(() => {
+      app.mount("#app");
+    });
+  }
 });
 
 defineCustomElements(window);
-

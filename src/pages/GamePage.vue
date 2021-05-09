@@ -2,7 +2,7 @@
   <base-layout
     toolbarColor="orange"
     statusBarColor="#faa329"
-    pageDefaultBackLink="/"
+    pageDefaultBackLink="/home"
   >
     <div class="wrapper">
       <div class="sub-header-container ion-padding-top">
