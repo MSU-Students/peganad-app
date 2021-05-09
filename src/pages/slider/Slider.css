@@ -1,0 +1,68 @@
+@import url("https://fonts.googleapis.com/css2?family=Exo:wght@400;500&display=swap");
+
+ion-slides {
+  height: 100%;
+  font-family: "Exo", sans-serif;
+}
+
+.swiper-slide {
+  display: flex;
+  align-items: center;
+  justify-items: center;
+}
+
+.swiper-slide img {
+  max-height: 50%;
+  max-width: 80%;
+  margin: 0px 0px 0px 0px;
+  pointer-events: none;
+}
+
+b {
+  font-weight: 500;
+}
+
+p {
+  padding: 0 40px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ion-color-step-600, #60646b);
+}
+
+p b {
+  color: var(--ion-text-color, #000000);
+}
+
+.internet {
+  font-size: 2em;
+  font-family: "Exo", sans-serif;
+  font-weight: bold;
+  color: rgb(247, 67, 67);
+}
+
+.note {
+  font-size: 1em;
+  font-family: "Exo", sans-serif;
+  font-weight: lighter;
+  color: rgb(99, 99, 99);
+}
+
+.slide1-text {
+  color: #3880ff;
+  font-weight: bolder;
+}
+
+.slide2-text {
+  color: #eb445a;
+  font-weight: bolder;
+}
+
+.slide3-text {
+  color: #faa329;
+  font-weight: bolder;
+}
+
+.slide4-text {
+  color: #3880ff;
+  font-weight: bolder;
+}
