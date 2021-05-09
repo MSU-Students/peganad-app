@@ -6,6 +6,10 @@ const routes = [
     redirect: "/home",
   },
   {
+    path: "/download",
+    component: () => import("../components/slider-screen/SliderScreen.vue"),
+  },
+  {
     path: "/home",
     name: "Home",
     component: () => import("../pages/home/HomePage.vue"),

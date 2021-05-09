@@ -1,5 +1,5 @@
 <template>
-  <ion-content fullscreen class="ion-padding" scroll-y="false">
+  <base-layout>
     <ion-slides>
       <ion-slide>
         <div class="slide">
@@ -44,18 +44,18 @@
 
       <ion-slide>
         <div class="slide-4">
-          <div v-if="internetStatus">
+          <div v-if="!isOnline">
             <div class="internet">Internet Lost!</div>
             <div class="note">
               Please connect to the internet to Download the content. Thank you!
             </div>
           </div>
-          <div v-if="!internetStatus">
+          <div v-if="isOnline">
             <img src="../../../public/assets/design/congrats.png" />
             <h1 class="slide4-text">Download Contents</h1>
             <ion-button
               @click="downloadContent()"
-              :disabled="internetStatus"
+              :disabled="!isOnline"
               color="success"
               >Download<ion-icon slot="end" :icon="downloadOutline"></ion-icon
             ></ion-button>
@@ -63,7 +63,7 @@
         </div>
       </ion-slide>
     </ion-slides>
-  </ion-content>
+  </base-layout>
 </template>
 
 <script>
