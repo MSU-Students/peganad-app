@@ -7,7 +7,7 @@ const routes = [
   },
   {
     path: "/download",
-    component: () => import("../components/slider-screen/SliderScreen.vue"),
+    component: () => import("../pages/slider/Slider.vue"),
   },
   {
     path: "/home",
