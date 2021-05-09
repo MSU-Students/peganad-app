@@ -10,17 +10,18 @@ const store = createStore({
         progress: 0,
         payload: null, // array
         category: "",
+        done: false,
       },
     };
   },
   getters: {},
   mutations: {
+    gamePreferences(state, value) {
+      state.gamePreferences = value;
+    },
     loading(state, value) {
       state.loading = value;
       console.log(state.loading);
-    },
-    gamePreferences(state, value) {
-      state.gamePreferences = value;
     },
     status(state, value) {
       state.status = value;
@@ -30,6 +31,7 @@ const store = createStore({
     startDownload(context) {
       downloadContent.downloadContent((status) => {
         context.commit("status", status);
+        // context.commit("progress", status.progress);
         downloadContent.updateContent(status.payload, status.category);
       });
     },

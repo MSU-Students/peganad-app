@@ -1,7 +1,9 @@
+import { animalsQuery } from "../firestore/firebaseInit.js";
 import contentService from "../services/content.service.js";
-import Localbase from "localbase";
-import store from "../store/index.js";
+import componentUtil from "../utils/component.util.js";
 import router from "../router";
+import store from "../store/index.js";
+import Localbase from "localbase";
 
 let localDB = new Localbase("db");
 localDB.config.debug = false;
@@ -10,19 +12,24 @@ localDB.config.debug = false;
 let downloadByName = false;
 let content = [];
 class DownloadContent {
-  async checkLocalContent() {
-    const docsLength = await localDB.collection("contents").get();
-    if (docsLength.length == 1) {
+  async checkCollection() {
+    const collection = await localDB.collection("contents").get();
+
+    if (collection.length == 1) {
       // has collection of (animals)
-      return true;
+      // check length of animals
+      const documents = await localDB.collection("contents").get();
+      const collectionSize = (await animalsQuery.get()).docs.length;
+      if (documents[0].length != collectionSize) {
+        await localDB.collection("contents").delete();
+        return false;
+      } else {
+        return true;
+      }
     } else {
       // no collection
-      localDB
-        .collection("contents")
-        .delete()
-        .then(() => {
-          return false;
-        });
+      await localDB.collection("contents").delete();
+      return false;
     }
   }
 
@@ -49,7 +56,6 @@ class DownloadContent {
 
   async updateContent(docData, docName) {
     // updating content into new base64 value
-
     try {
       let newContent = {
         name: docData.name,
@@ -64,37 +70,41 @@ class DownloadContent {
   }
 
   async getBase64FromUrl(url) {
-    try {
-      var res = await fetch(url);
-      var blob = await res.blob();
+    if (typeof url != "undefined") {
+      console.log("still processing?");
+      try {
+        var res = await fetch(url);
+        var blob = await res.blob();
 
-      return new Promise((resolve, reject) => {
-        var reader = new FileReader();
-        reader.addEventListener(
-          "load",
-          function() {
-            var base64data = reader.result.substr(
-              reader.result.indexOf(",") + 1
-            );
-            resolve(base64data);
-          },
-          false
-        );
+        return new Promise((resolve, reject) => {
+          var reader = new FileReader();
+          reader.addEventListener(
+            "load",
+            function() {
+              var base64data = reader.result.substr(
+                reader.result.indexOf(",") + 1
+              );
+              resolve(base64data);
+            },
+            false
+          );
 
-        reader.onerror = () => {
-          return reject(this);
-        };
-        reader.readAsDataURL(blob);
-      });
-    } catch (error) {
-      console.log(error);
+          reader.onerror = () => {
+            return reject(this);
+          };
+          reader.readAsDataURL(blob);
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 
   async storeDataToLocalDB(docData, docName) {
     content.push(docData);
     let progress = store.state.status.progress;
-    if (progress == content.length) {
+    let collectionSize = (await animalsQuery.get()).docs.length;
+    if (progress == collectionSize) {
       await localDB
         .collection("contents")
         .add(
@@ -102,9 +112,24 @@ class DownloadContent {
           typeof docName == "string" ? docName : docName[0]
         )
         .catch((err) => console.log(err.message));
-      let loading = store.state.loading;
-      await loading.dismiss();
-      await router.replace("/home");
+      setTimeout(async () => {
+        await router.replace("/home");
+      }, 1000);
+    } else {
+      console.log("interupt download!");
+      store.commit("status", {
+        progress: 0,
+        payload: null, // array
+        category: "",
+        done: false,
+      });
+      await componentUtil.popupToast(
+        "Network Interrupted!",
+        "danger",
+        3000,
+        "bottom"
+      );
+      return;
     }
   }
 }

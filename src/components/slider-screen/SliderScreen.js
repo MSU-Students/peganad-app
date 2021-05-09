@@ -4,9 +4,10 @@ import {
   IonSlides,
   IonButton,
   IonIcon,
+  IonProgressBar,
+  IonSpinner,
 } from "@ionic/vue";
 import { downloadOutline } from "ionicons/icons";
-import componentUtil from "../../utils/component.util.js";
 import { firebaseDB } from "../../firestore/firebaseInit.js";
 import Localbase from "localbase";
 
@@ -20,11 +21,15 @@ export default {
     IonSlides,
     IonButton,
     IonIcon,
+    IonProgressBar,
+    IonSpinner,
   },
   emits: ["hide-slider"],
   data() {
     return {
       isOnline: true,
+      isStarting: false,
+      isDownloading: false,
       // icons
       downloadOutline,
     };
@@ -32,27 +37,38 @@ export default {
   created() {
     this.checkNetworkStatusChange();
   },
+  computed: {
+    status() {
+      return this.$store.state.status;
+    },
+  },
   methods: {
     /** BUSINESS LOGIC **/
     async checkNetworkStatusChange() {
       let connectedRef = firebaseDB.ref(".info/connected");
-      connectedRef.on("value", (snap) => {
+      connectedRef.on("value", async (snap) => {
         if (snap.val() == true) {
           // If Online
           this.isOnline = true;
         } else if (snap.val() == false) {
           // Offline
           this.isOnline = false;
+          this.isStarting = false;
+          this.isDownloading = false;
         }
       });
     },
     async downloadContent() {
-      this.$store.dispatch("startDownload");
-      const loading = await componentUtil.presentLoading(
-        "Downloading please wait..."
-      );
-      await loading.present();
-      this.$store.dispatch("loading", loading);
+      this.isStarting = true;
+      setTimeout(() => {
+        this.$store.dispatch("startDownload");
+        this.isDownloading = true;
+        this.isStarting = false;
+      }, 3000);
     },
+  },
+  ionViewWillLeaver() {
+    this.isDownloading = false;
+    console.log("done!");
   },
 };

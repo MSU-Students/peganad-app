@@ -37,17 +37,16 @@ const app = createApp(App)
 app.component("base-layout", BaseLayout);
 
 router.isReady().then(async () => {
-  const hasCollection = await downloadContent.checkLocalContent();
-  if (typeof hasCollection == "undefined") {
+  const hasCollection = await downloadContent.checkCollection();
+  if (hasCollection == false) {
     router.replace("/download").then(() => {
       app.mount("#app");
     });
-  } else if (hasCollection) {
+  } else {
     router.replace("/home").then(() => {
       app.mount("#app");
     });
   }
- 
 });
 
 defineCustomElements(window);
