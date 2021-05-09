@@ -33,7 +33,6 @@ export default {
   data() {
     return {
       contents: {},
-      answers: null,
       audioPlaying: false,
       tappedIndex: null,
       // icon

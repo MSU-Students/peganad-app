@@ -15,9 +15,7 @@
 
 <script>
 import LearnCardContent from "../../components/learn-card/LearnCardContent.vue";
-import { Plugins } from "@capacitor/core";
-
-const { StatusBar } = Plugins;
+import componentUtil from "../../utils/component.util.js";
 
 export default {
   name: "LearnContentPage",
@@ -34,10 +32,7 @@ export default {
   },
   methods: {
     async statusBar() {
-      const statusBar = await StatusBar.setBackgroundColor({
-        color: "#ec29fa",
-      });
-      return statusBar;
+      await componentUtil.statusBar("#ec29fa");
     },
   },
 };

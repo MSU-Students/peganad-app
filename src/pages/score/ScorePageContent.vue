@@ -164,13 +164,11 @@ import {
   IonLabel,
 } from "@ionic/vue";
 import { gameControllerOutline, trophy } from "ionicons/icons";
-import { Plugins } from "@capacitor/core";
+import componentUtil from "../../utils/component.util.js";
 import Localbase from "localbase";
 
 let localDB = new Localbase("db");
 localDB.config.debug = false;
-
-const { StatusBar } = Plugins;
 
 export default {
   name: "ScorePageContent",
@@ -255,10 +253,7 @@ export default {
     },
     // UI Logic
     async statusBar() {
-      const statusBar = await StatusBar.setBackgroundColor({
-        color: this.statusBarColor,
-      });
-      return statusBar;
+      await componentUtil.statusBar(this.statusBarColor);
     },
   },
 };

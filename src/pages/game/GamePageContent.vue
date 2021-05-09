@@ -17,9 +17,7 @@
 
 <script>
 import GameCardContent from "../../components/game-card/GameCardContent.vue";
-import { Plugins } from "@capacitor/core";
-
-const { StatusBar } = Plugins;
+import componentUtil from "../../utils/component.util.js";
 
 export default {
   name: "GamePageContent",
@@ -36,10 +34,7 @@ export default {
   },
   methods: {
     async statusBar() {
-      const statusBar = await StatusBar.setBackgroundColor({
-        color: "#f3128a",
-      });
-      return statusBar;
+      await componentUtil.statusBar("#f3128a");
     },
   },
 };

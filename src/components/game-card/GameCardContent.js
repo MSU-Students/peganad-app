@@ -14,9 +14,9 @@ import {
   IonInput,
   IonItem,
   IonLabel,
-  createAnimation,
 } from "@ionic/vue";
 import { mic, checkmarkOutline, closeOutline, pause } from "ionicons/icons";
+import componentUtil from "../../utils/component.util.js";
 import Localbase from "localbase";
 
 let localDB = new Localbase("db");
@@ -63,7 +63,6 @@ export default {
       score: 0,
       gameTimer: 10,
       currentTimer: 0,
-      soundTimer: 0,
       soundDelay: 500,
       delay: 1000,
       // icon
@@ -355,7 +354,6 @@ export default {
         countDownTimer(this.gameTimer);
       }
     },
-    /** UI LOGIC **/
     playAgain() {
       this.showGameContent = true;
       this.nameInputted = false;
@@ -382,23 +380,9 @@ export default {
         clearTimeout(this.currentTimer);
       });
     },
-    slideAnimation(
-      element,
-      speed,
-      positionFrom,
-      positionTo,
-      opacityFrom,
-      opacityTo
-    ) {
-      const animation = createAnimation()
-        .addElement(document.querySelector(element))
-        .duration(speed)
-        .fromTo("transform", positionFrom, positionTo)
-        .fromTo("opacity", opacityFrom, opacityTo);
-      animation.play();
-    },
-    nextAnimation() {
-      this.slideAnimation(
+    /** UI LOGIC **/
+    async nextAnimation() {
+      const animation = await componentUtil.slideAnimation(
         ".card-content",
         800,
         "translateX(0px)",
@@ -406,10 +390,9 @@ export default {
         "1",
         "0.2"
       );
-      setTimeout(() => {
-        this.displayContentOneByOne();
-        this.generateRandomAnswer();
-        this.slideAnimation(
+      animation.play();
+      setTimeout(async () => {
+        const animation = await componentUtil.slideAnimation(
           ".card-content",
           800,
           "translateX(-350px)",
@@ -417,6 +400,9 @@ export default {
           "0.2",
           "1"
         );
+        animation.play();
+        this.displayContentOneByOne();
+        this.generateRandomAnswer();
         this.isAnswerCorrect = false;
         this.isAnswerWrong = false;
         this.tappedIndex = null;

@@ -73,11 +73,8 @@ import {
   IonCol,
   IonButton,
   IonIcon,
-  toastController,
-  loadingController,
 } from "@ionic/vue";
 import { bookOutline, downloadOutline } from "ionicons/icons";
-import { Plugins } from "@capacitor/core";
 import {
   animalsQuery,
   colorsQuery,
@@ -85,12 +82,11 @@ import {
   numbersQuery,
   firebaseDB,
 } from "../firestore/firebaseInit.js";
+import componentUtil from "../utils/component.util.js";
 import Localbase from "localbase";
 
 let localDB = new Localbase("db");
 localDB.config.debug = false;
-
-const { StatusBar } = Plugins;
 
 const cards = [
   {
@@ -176,27 +172,17 @@ export default {
   },
   methods: {
     async statusBar() {
-      const statusBar = await StatusBar.setBackgroundColor({
-        color: "#faa329",
-      });
-      return statusBar;
+      await componentUtil.statusBar("#faa329");
     },
     async presentLoading() {
-      const loading = await loadingController.create({
-        message: "Downloading please wait...",
-      });
+      const loading = await componentUtil.presentLoading(
+        "Downloading please wait..."
+      );
       this.loading = loading;
-      return loading;
+      return loading.present();
     },
     async popupToast(message, color, duration, position) {
-      console.log(message, color, duration, position);
-      const toast = await toastController.create({
-        message: message,
-        color: color,
-        duration: duration,
-        position: position,
-      });
-      return toast.present();
+      await componentUtil.popupToast(message, color, duration, position);
     },
     async checkNetworkStatusChange() {
       let connectedRef = firebaseDB.ref(".info/connected");

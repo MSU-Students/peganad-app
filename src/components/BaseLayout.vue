@@ -52,9 +52,7 @@ import {
   alertController,
 } from "@ionic/vue";
 import { grid, trophy, arrowBackOutline, closeOutline } from "ionicons/icons";
-import { Plugins } from "@capacitor/core";
-
-const { StatusBar } = Plugins;
+import componentUtil from "../utils/component.util.js";
 
 export default {
   name: "BaseLayout",
@@ -101,10 +99,7 @@ export default {
   },
   methods: {
     async statusBar() {
-      const statusBar = await StatusBar.setBackgroundColor({
-        color: this.statusBarColor,
-      });
-      return statusBar;
+      await componentUtil.statusBar(this.statusBarColor);
     },
     async presentAlertConfirm(pageDefaultBackLink) {
       const alert = await alertController.create({

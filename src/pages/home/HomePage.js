@@ -11,10 +11,7 @@ import {
   IonIcon,
 } from "@ionic/vue";
 import { arrowForwardOutline } from "ionicons/icons";
-import { Plugins } from "@capacitor/core";
-import SliderScreen from "../../components/slider-screen/SliderScreen.vue";
-
-const { StatusBar } = Plugins;
+import componentUtil from "../../utils/component.util.js";
 
 const cards = [
   {
@@ -50,7 +47,6 @@ export default {
     IonCol,
     IonButton,
     IonIcon,
-    SliderScreen,
   },
   data() {
     return {
@@ -66,10 +62,7 @@ export default {
   methods: {
     /** UI Logic **/
     async statusBar() {
-      const statusBar = await StatusBar.setBackgroundColor({
-        color: "#f4f5f8",
-      });
-      return statusBar;
+      await componentUtil.statusBar("#f4f5f8");
     },
   },
 };
