@@ -6,26 +6,54 @@ import {
   firestoreDB,
 } from "../firestore/firebaseInit.js";
 import Localbase from "localbase";
+import store from "../store/index.js";
+import downloadContent from "../services/download-content.service.js";
+import componentUtil from "../utils/component.util.js";
 
 let localDB = new Localbase("db");
 localDB.config.debug = false;
 
+// eslint-disable-next-line no-unused-vars
+let nextQuery = undefined;
+let cursor = 0;
 class ContentService {
   async getAnimals(cb) {
-    let animalArr = [];
-    let cursor = 0;
-    const BUFFER = 2;
-    do {
-      const res = await animalsQuery.startAfter(cursor).limit(2).get();
-      res.forEach((r) => {
-        animalArr.push(r.data());
-      });
-      cb({
-        cat: 'animals', status: animalArr.length
-      })
-
-    } while (true)
-    return animalArr;
+    try {
+      let collectionSize = (await animalsQuery.get()).docs.length;
+      do {
+        let firstQuery = nextQuery
+          ? animalsQuery
+              .orderBy("name")
+              .limit(1)
+              .startAfter(nextQuery)
+          : animalsQuery.orderBy("name").limit(1);
+        let docSnapshot = await firstQuery.get();
+        nextQuery = docSnapshot.docs[0];
+        if (nextQuery) {
+          cursor += 1;
+          console.log("Downloading ->", cursor);
+          cb({
+            progress: cursor,
+            payload: nextQuery.data(),
+            category: "animals",
+          });
+        } else {
+          // no connection or something happend then re download again
+          let loading = store.state.loading;
+          await componentUtil.popupToast(
+            "Network Interrupted!",
+            "danger",
+            3000,
+            "bottom"
+          );
+          await loading.dismiss();
+          await downloadContent.checkLocalContent();
+        }
+      } while (cursor < collectionSize);
+      // done download all contents stop all loading
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async getColors() {

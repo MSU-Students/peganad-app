@@ -1,21 +1,22 @@
-import store from "../store";
-
 import contentService from "../services/content.service.js";
 import Localbase from "localbase";
+import store from "../store/index.js";
+import router from "../router";
 
 let localDB = new Localbase("db");
 localDB.config.debug = false;
 
-let counter = 0;
+// eslint-disable-next-line no-unused-vars
 let downloadByName = false;
+let content = [];
 class DownloadContent {
   async checkLocalContent() {
-    const db = await localDB.collection("contents").get();
-    if (db.length == 4) {
-      // has db
+    const docsLength = await localDB.collection("contents").get();
+    if (docsLength.length == 1) {
+      // has collection of (animals)
       return true;
     } else {
-      // no db
+      // no collection
       localDB
         .collection("contents")
         .delete()
@@ -37,135 +38,74 @@ class DownloadContent {
   }
 
   async downloadContent(cb) {
-    let contentObj = {};
-    counter = 0;
+    console.log("downloading...");
     await Promise.all([
       (async () => {
-        let animals = await contentService.getAnimals(cb);
-        
-        contentObj.animals = animals;
-        await this.updateContent(contentObj.animals, "animals");
+        await contentService.getAnimals(cb);
       })(),
-      (async () => {
-        let colors = await contentService.getColors(cb);
-        contentObj.colors = colors;
-        await this.updateContent(contentObj.colors, "colors");
-      })(),
-      (async () => {
-        let numbers = await contentService.getNumbers(cb);
-        contentObj.numbers = numbers;
-        await this.updateContent(contentObj.numbers, "numbers");
-      })(),
-      (async () => {
-        let words = await contentService.getWords(cb);
-        contentObj.words = words;
-        await this.updateContent(contentObj.words, "words");
-      })().catch((err) => {
-        console.log(err);
-      }),
-    ]);
+    ]).catch((err) => console.log(err));
+    console.log("done downloading!");
   }
 
   async updateContent(docData, docName) {
-    let arrContent = docData;
-    let response = [];
-    await Promise.all([
-      (async () => {
-        await arrContent.map(async (doc) => {
-          if (doc.img) {
-            await this.getBase64FromUrl(doc.img)
-              .then(async (result) => {
-                response.push(result);
-                let contentIndex = arrContent.findIndex(
-                  (content) => content.img === doc.img
-                );
-                arrContent[contentIndex].img = result;
-                if (response.length === arrContent.length) {
-                  response = [];
-                  if (doc.audio) {
-                    arrContent.forEach(async (doc) => {
-                      await this.getBase64FromUrl(doc.audio)
-                        .then(async (result) => {
-                          response.push(result);
-                          let contentIndex = arrContent.findIndex(
-                            (content) => content.audio === doc.audio
-                          );
-                          arrContent[contentIndex].audio = result;
-                          if (response.length === arrContent.length) {
-                            await this.storeDataToLocalDB(arrContent, docName);
-                          }
-                        })
-                        .catch((err) => console.error(err));
-                    });
-                  } else {
-                    await this.storeDataToLocalDB(arrContent, docName);
-                  }
-                }
-              })
-              .catch((err) => {
-                arrContent = [];
-                response = [];
-                console.error(err);
-              });
-          }
-        });
-      })().catch((err) => {
-        arrContent = [];
-        response = [];
-        console.log(err);
-      }),
-    ]);
-  }
+    // updating content into new base64 value
 
-  async storeDataToLocalDB(docData, docName) {
-    await localDB
-      .collection("contents")
-      .add(
-        { [docName]: docData },
-        typeof docName == "string" ? docName : docName[0]
-      )
-      .then(() => {
-        counter++;
-        console.log(counter);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    if (counter >= 4) {
-      store.dispatch("isHide", false);
-    } else if (downloadByName) {
-      if (docName[0] == "aniamls") {
-        store.dispatch("isHide", 0);
-      } else if (docName[0] == "colors") {
-        store.dispatch("isHide", 1);
-      } else if (docName[0] == "numbers") {
-        store.dispatch("isHide", 2);
-      } else if (docName[0] == "words") {
-        store.dispatch("isHide", 3);
-      }
+    try {
+      let newContent = {
+        name: docData.name,
+        translatedName: docData.translatedName,
+        img: await this.getBase64FromUrl(docData.img),
+        audio: await this.getBase64FromUrl(docData.audio),
+      };
+      await this.storeDataToLocalDB(newContent, docName);
+    } catch (error) {
+      console.log(error);
     }
   }
 
   async getBase64FromUrl(url) {
-    var res = await fetch(url);
-    var blob = await res.blob();
+    try {
+      var res = await fetch(url);
+      var blob = await res.blob();
 
-    return new Promise((resolve, reject) => {
-      var reader = new FileReader();
-      reader.addEventListener(
-        "load",
-        function() {
-          var base64data = reader.result.substr(reader.result.indexOf(",") + 1);
-          resolve(base64data);
-        },
-        false
-      );
+      return new Promise((resolve, reject) => {
+        var reader = new FileReader();
+        reader.addEventListener(
+          "load",
+          function() {
+            var base64data = reader.result.substr(
+              reader.result.indexOf(",") + 1
+            );
+            resolve(base64data);
+          },
+          false
+        );
 
-      reader.onerror = () => {
-        return reject(this);
-      };
-      reader.readAsDataURL(blob);
-    });
+        reader.onerror = () => {
+          return reject(this);
+        };
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async storeDataToLocalDB(docData, docName) {
+    content.push(docData);
+    let progress = store.state.status.progress;
+    if (progress == content.length) {
+      await localDB
+        .collection("contents")
+        .add(
+          { [docName]: content },
+          typeof docName == "string" ? docName : docName[0]
+        )
+        .catch((err) => console.log(err.message));
+      let loading = store.state.loading;
+      await loading.dismiss();
+      await router.replace("/home");
+    }
   }
 }
 

@@ -4,41 +4,38 @@ import downloadContent from "../services/download-content.service";
 const store = createStore({
   state() {
     return {
-      isHide: true,
+      loading: undefined,
       gamePreferences: {},
-      progress: {
-        animals: 0
-      }
-    }
-  },
-  getters: {
-    // isHide(state) {
-    //   return state.isHide;
-    // },
+      status: {
+        progress: 0,
+        payload: null, // array
+        category: "",
       },
+    };
+  },
+  getters: {},
   mutations: {
-    isHide(state, value) {
-      state.isHide = value;
+    loading(state, value) {
+      state.loading = value;
+      console.log(state.loading);
     },
     gamePreferences(state, value) {
       state.gamePreferences = value;
     },
-    progress(state, value) {
-      state.progress[value.category] = value.status;
-    }
+    status(state, value) {
+      state.status = value;
+    },
   },
   actions: {
-    isHide(context, value) {
-      context.commit("isHide", value);
-    },
     startDownload(context) {
-      downloadContent.downloadContent((status)=> {
-        //status = { category, percentage, payload }
-        context.commit('progress', status);
-        downloadContent.updateContent(status.payload)
+      downloadContent.downloadContent((status) => {
+        context.commit("status", status);
+        downloadContent.updateContent(status.payload, status.category);
       });
-      
-    }
+    },
+    loading(context, value) {
+      context.commit("loading", value);
+    },
   },
 });
 
