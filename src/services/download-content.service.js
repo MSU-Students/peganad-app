@@ -1,32 +1,29 @@
 import { animalsQuery } from "../firestore/firebaseInit.js";
-import contentService from "../services/content.service.js";
+import firebaseService from "./firebase-content.service.js";
 import router from "../router";
 import store from "../store/index.js";
-import {
-  addContents,
-  getContents,
-  deleteContents,
-} from "../localbase/localbaseInit.js";
+import localbaseService from "../services/localbase-content.service.js";
 
 // eslint-disable-next-line no-unused-vars
 let downloadByName = false;
 let content = [];
 class DownloadContent {
   async checkCollection() {
-    const collection = await getContents;
+    const collection = await localbaseService.getContent();
+    console.log(collection.length);
     if (collection.length == 1) {
       // has collection of (animals)
       return true;
     } else {
       // no collection
-      await deleteContents;
+      await localbaseService.deleteContent();
       return false;
     }
   }
 
   async downloadContentByName(collectionName) {
     let contentObj = {};
-    let collection = await contentService.getContentByName(collectionName);
+    let collection = await firebaseService.getContentByName(collectionName);
     contentObj[collectionName] = collection;
     await this.updateContent(contentObj[collectionName], [collectionName]).then(
       () => {
@@ -39,7 +36,7 @@ class DownloadContent {
     console.log("downloading...");
     await Promise.all([
       (async () => {
-        await contentService.getAnimals(cb);
+        await firebaseService.getAnimals(cb);
       })(),
     ]).catch((err) => console.log(err));
     console.log("done downloading!");
@@ -93,7 +90,7 @@ class DownloadContent {
     let progress = store.state.status.progress;
     let collectionSize = (await animalsQuery.get()).docs.length;
     if (progress == collectionSize) {
-      await addContents(content, category);
+      await localbaseService.addContent(content, category);
       setTimeout(async () => {
         await router.replace("/home");
       }, 1000);

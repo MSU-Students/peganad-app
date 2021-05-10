@@ -9,7 +9,7 @@ import {
 // eslint-disable-next-line no-unused-vars
 let nextQuery = undefined;
 let cursor = 0;
-class ContentService {
+class FirebaseService {
   async getAnimals(cb) {
     try {
       let collectionSize = (await animalsQuery.get()).docs.length;
@@ -75,5 +75,5 @@ class ContentService {
   }
 }
 
-let contentService = new ContentService();
-export default contentService;
+let firebaseService = new FirebaseService();
+export default firebaseService;
