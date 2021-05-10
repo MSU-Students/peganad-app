@@ -76,7 +76,6 @@ export default {
     this.fetchContent();
   },
   unmounted() {
-    console.log("here!");
     this.showGameContent = true;
     this.nameInputted = false;
     this.newHighScore = false;
@@ -231,11 +230,9 @@ export default {
 
       if (doc) {
         if (doc.score.length != 5) {
-          console.log("here!");
           this.newHighScore = true;
         }
       } else {
-        console.log("here!");
         this.newHighScore = true;
       }
     },
@@ -244,7 +241,6 @@ export default {
       let self = this;
       let dataArr = [];
       let addScore = function(dataArr) {
-        console.log("Add New Score!");
         let data = {
           score: self.score,
           playerName: self.playerName == "" ? "Unknown" : self.playerName,
@@ -307,13 +303,11 @@ export default {
             self
               .playSound("countdown")
               .then(async (audio) => {
-                console.log("play: ", audio.currentTime);
                 await audio.play();
               })
               .catch((err) => console.log(err));
           }
         } else if (self.gameTimer == 0) {
-          console.log("Timer Over!");
           self.tappedAnswer = true;
           self.continueAnswer = true;
           self.isAnswerWrong = true;
@@ -345,7 +339,6 @@ export default {
           if (this.gameTimer <= 4) {
             this.playSound("countdown").then((audio) => {
               audio.pause();
-              console.log("pause: ", audio.currentTime);
             });
           }
         }

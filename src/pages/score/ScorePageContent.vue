@@ -59,26 +59,26 @@
                   >
                     <ion-col size="3">
                       <div>
-                        <img src="../../../public/assets/design/colors.png" />
+                        <img src="../../../public/assets/design/animals.png" />
                       </div>
                     </ion-col>
                     <ion-col class="game-name ion-text-center" size="9"
                       ><h1>Color Best Scores</h1></ion-col
                     >
+                    <ion-col size="12">
+                      <ion-list>
+                        <ion-item
+                          class="ion-text-center"
+                          v-for="(score, index) in colorScore"
+                          :key="index"
+                        >
+                          <ion-label color="pink">
+                            {{ score.playerName + " - " + score.score }}
+                          </ion-label>
+                        </ion-item>
+                      </ion-list>
+                    </ion-col>
                   </ion-row>
-                  <ion-col size="12">
-                    <ion-list>
-                      <ion-item
-                        class="ion-text-center"
-                        v-for="(score, index) in colorScore"
-                        :key="index"
-                      >
-                        <ion-label color="pink">
-                          {{ score.playerName + " - " + score.score }}
-                        </ion-label>
-                      </ion-item>
-                    </ion-list>
-                  </ion-col>
                 </ion-card-content>
               </ion-card>
             </ion-col>
@@ -213,7 +213,6 @@ export default {
           if (animals != null) {
             let animalScore = animals.score.sort((a, b) => b.score - a.score);
             this.animalScore = animalScore;
-            console.log(this.animalScore);
           }
         })(),
         (async () => {
@@ -224,7 +223,6 @@ export default {
           if (colors != null) {
             let colorScore = colors.score.sort((a, b) => b.score - a.score);
             this.colorScore = colorScore;
-            console.log(this.colorScore);
           }
         })(),
         (async () => {
@@ -235,7 +233,6 @@ export default {
           if (numbers != null) {
             let numberScore = numbers.score.sort((a, b) => b.score - a.score);
             this.numberScore = numberScore;
-            console.log(this.numberScore);
           }
         })(),
         (async () => {
@@ -246,7 +243,6 @@ export default {
           if (words != null) {
             let wordScore = words.score.sort((a, b) => b.score - a.score);
             this.wordScore = wordScore;
-            console.log(this.wordScore);
           }
         })(),
       ]).catch((err) => console.log(err));

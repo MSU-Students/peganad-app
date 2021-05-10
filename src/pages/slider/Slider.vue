@@ -54,33 +54,46 @@
             <img src="../../../public/assets/design/congrats.png" />
             <div v-if="isDownloading">
               <span v-if="status.progress != 0" class="ion-text-capitalize"
-                >{{ status.category }}: {{ status.progress }}
+                >{{ status.category }}: {{ status.progress }} /
+                {{ status.docSize }}
               </span>
-              <span v-else class="ion-text-capitalize">Animal: 0 </span>
+              <ion-spinner v-else name="dots" color="primary"></ion-spinner>
               <ion-progress-bar
-                :value="status.progress / 10"
+                v-if="status.progress / status.docSize"
+                :value="status.progress / status.docSize"
+                :buffer="status.progress / status.docSize"
               ></ion-progress-bar>
+              <ion-progress-bar v-else type="indeterminate"></ion-progress-bar>
             </div>
-            <h1 v-if="!isDownloading && !isStarting" class="slide4-text">
+            <h3 v-if="!isDownloading && !isStarting" class="slide4-text">
               Download Contents
-            </h1>
-            <h1 v-else-if="isStarting" class="slide4-text">Starting...</h1>
-            <h1 v-if="isDownloading" class="slide4-text">Downloading...</h1>
+            </h3>
+            <h3
+              v-else-if="$store.state.status.progress == 0"
+              class="slide4-text"
+            >
+              Starting...
+            </h3>
+            <h3
+              v-else-if="
+                $store.state.status.progress < status.docSize && isDownloading
+              "
+              class="slide4-text"
+            >
+              Downloading...
+            </h3>
+            <h3 v-else class="slide4-text">Finishing up...</h3>
             <ion-button
-              v-if="!status.done"
               @click="downloadContent()"
-              :disabled="!isOnline || isDownloading"
+              :disabled="isStarting || isDownloading"
               color="success"
               >Download
               <ion-icon
-                v-if="!isDownloading"
+                v-if="!isDownloading && !isStarting"
                 slot="end"
                 :icon="downloadOutline"
               />
-              <ion-spinner
-                v-else-if="isDownloading"
-                class="ion-margin-start"
-              ></ion-spinner>
+              <ion-spinner v-else class="ion-margin-start"></ion-spinner>
             </ion-button>
           </div>
         </div>

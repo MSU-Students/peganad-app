@@ -6,8 +6,9 @@ const store = createStore({
     return {
       gamePreferences: {},
       status: {
+        docSize: 0,
         progress: 0,
-        payload: null, // array
+        payload: null,
         category: "",
         done: false,
       },
@@ -24,9 +25,9 @@ const store = createStore({
   },
   actions: {
     startDownload(context) {
-      downloadContent.downloadContent((status) => {
+      downloadContent.downloadContent(async (status) => {
         context.commit("status", status);
-        downloadContent.updateContent(status.payload, status.category);
+        await downloadContent.updateContent(status.payload, status.category);
       });
     },
   },

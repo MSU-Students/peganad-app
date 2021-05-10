@@ -9,6 +9,7 @@ import {
 } from "@ionic/vue";
 import { downloadOutline } from "ionicons/icons";
 import { firebaseDB } from "../../firestore/firebaseInit.js";
+import downloadContent from "../../services/download-content.service.js";
 
 export default {
   components: {
@@ -48,6 +49,7 @@ export default {
           this.isOnline = true;
         } else if (snap.val() == false) {
           // Offline
+          downloadContent.checkContents();
           this.isOnline = false;
           this.isStarting = false;
           this.isDownloading = false;
@@ -65,6 +67,5 @@ export default {
   },
   ionViewWillLeaver() {
     this.isDownloading = false;
-    console.log("done!");
   },
 };

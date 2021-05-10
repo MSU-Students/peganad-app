@@ -37,7 +37,7 @@ const app = createApp(App)
 app.component("base-layout", BaseLayout);
 
 router.isReady().then(async () => {
-  const hasCollection = await downloadContent.checkCollection();
+  const hasCollection = await downloadContent.checkContents();
   if (hasCollection == false) {
     router.replace("/download").then(() => {
       app.mount("#app");

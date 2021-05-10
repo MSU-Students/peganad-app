@@ -145,7 +145,6 @@ export default {
   watch: {
     // to hide slider when successfully downloaded the content!
     isHide: function(val) {
-      console.log("here!", val);
       this.loading.dismiss().then(() => {
         clearTimeout(this.currentTimer);
         if (val == 0) {
@@ -211,10 +210,8 @@ export default {
           animalsQuery.onSnapshot((snapshot) => {
             checkDatabase("animals").then((doc) => {
               if (snapshot.docs.length != doc["animals"].length) {
-                console.log("NEW DATA ARRIVED");
                 this.cards[0].hasNewData = true;
               } else {
-                console.log("NO NEW DATA!");
                 this.cards[0].hasNewData = false;
               }
             });
@@ -224,10 +221,8 @@ export default {
           colorsQuery.onSnapshot((snapshot) => {
             checkDatabase("colors").then((doc) => {
               if (snapshot.docs.length != doc["colors"].length) {
-                console.log("NEW DATA ARRIVED");
                 this.cards[1].hasNewData = true;
               } else {
-                console.log("NO NEW DATA!");
                 this.cards[1].hasNewData = false;
               }
             });
@@ -237,10 +232,8 @@ export default {
           numbersQuery.onSnapshot((snapshot) => {
             checkDatabase("numbers").then((doc) => {
               if (snapshot.docs.length != doc["numbers"].length) {
-                console.log("NEW DATA ARRIVED");
                 this.cards[2].hasNewData = true;
               } else {
-                console.log("NO NEW DATA!");
                 this.cards[2].hasNewData = false;
               }
             });
@@ -250,10 +243,8 @@ export default {
           wordsQuery.onSnapshot((snapshot) => {
             checkDatabase("words").then((doc) => {
               if (snapshot.docs.length != doc["words"].length) {
-                console.log("NEW DATA ARRIVED");
                 this.cards[3].hasNewData = true;
               } else {
-                console.log("NO NEW DATA!");
                 this.cards[3].hasNewData = false;
               }
             });
