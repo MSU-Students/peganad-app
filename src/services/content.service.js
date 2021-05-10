@@ -5,10 +5,6 @@ import {
   wordsQuery,
   firestoreDB,
 } from "../firestore/firebaseInit.js";
-import Localbase from "localbase";
-
-let localDB = new Localbase("db");
-localDB.config.debug = false;
 
 // eslint-disable-next-line no-unused-vars
 let nextQuery = undefined;
@@ -34,11 +30,9 @@ class ContentService {
             category: "animals",
           });
         } else {
-          cursor = 0;
-          break;
+          console.log("something went wrong!");
         }
       } while (cursor < collectionSize);
-      // done download all contents stop all loading
     } catch (error) {
       console.log(error);
     }
