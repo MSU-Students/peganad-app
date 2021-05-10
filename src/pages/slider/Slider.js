@@ -9,10 +9,6 @@ import {
 } from "@ionic/vue";
 import { downloadOutline } from "ionicons/icons";
 import { firebaseDB } from "../../firestore/firebaseInit.js";
-import Localbase from "localbase";
-
-let localDB = new Localbase("db");
-localDB.config.debug = false;
 
 export default {
   components: {
