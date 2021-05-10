@@ -171,7 +171,7 @@ export default {
   },
   methods: {
     async statusBar() {
-      await componentUtil.statusBar("#faa329");
+      await componentUtil.statusBar("#eb445a");
     },
     async presentLoading() {
       const loading = await componentUtil.presentLoading(

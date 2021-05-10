@@ -42,7 +42,11 @@
                           :key="index"
                         >
                           <ion-label color="pink">
-                            {{ score.playerName + " - " + score.score }}
+                            <ol>
+                              <li>
+                                {{ score.playerName + " - " + score.score }}
+                              </li>
+                            </ol>
                           </ion-label>
                         </ion-item>
                       </ion-list>
