@@ -12,6 +12,7 @@ import {
 } from "@ionic/vue";
 import { arrowForwardOutline } from "ionicons/icons";
 import componentUtil from "../../utils/component.util.js";
+import downloadContent from "../../services/download-content.service.js";
 
 const cards = [
   {
@@ -58,11 +59,17 @@ export default {
   },
   ionViewWillEnter() {
     this.statusBar();
+    this.getCollection();
   },
   methods: {
     /** UI Logic **/
     async statusBar() {
       await componentUtil.statusBar("#f4f5f8");
+    },
+
+    async getCollection() {
+      const collection = await downloadContent.checkCollection();
+      console.log(collection);
     },
   },
 };
